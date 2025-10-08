@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    stages {
+        stage ('code-pull'){
+            steps {
+                 git branch: 'main', url: 'https://github.com/SONALSUBODH/terraform-jenkins.git'
+              }
+            }
+          stage ('terraform-init') {
+              steps {
+                  sh '''
+                  cd terraform-jenkins
+                  terraform init '''
+              }
+          }
+    }
+}
