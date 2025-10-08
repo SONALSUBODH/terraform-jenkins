@@ -1,0 +1,51 @@
+terraform {
+  backend "s3" {
+    bucket = "oncdec20-2025-remote-backend"
+    key    = "env/terraform.tfstate"
+    region = "us-west-2"
+  }
+}
+
+
+resource "aws_instance" "demo" {
+    ami = "ami-02d26659fd82cf299"
+    instance_type = "t2.micro"
+    security_groups = [aws_security_group.tf_sg.name]
+    tags = {
+    Name = "HelloWorld"
+    }
+  
+}
+
+
+resource "aws_security_group" "tf_sg" {
+  name        = "TF-jenkins-sg"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = "vpc-05bdcc8880aab85ab"
+
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+   
+  }
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+   
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_tls"
+  }
+}
